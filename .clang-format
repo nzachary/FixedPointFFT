@@ -1,0 +1,64 @@
+Language: Cpp
+
+LineEnding: LF
+
+AccessModifierOffset: -1
+ColumnLimit: 100
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+IndentAccessModifiers: false
+IndentCaseBlocks: true
+IndentCaseLabels: true
+IndentExportBlock: true
+IndentExternBlock: Indent
+IndentGotoLabels: false
+IndentPPDirectives: BeforeHash
+IndentWidth: 2
+IndentWrappedFunctionNames: false
+NamespaceIndentation: None
+PPIndentWidth: -1
+
+EmptyLineAfterAccessModifier: Always
+EmptyLineBeforeAccessModifier: Always
+FixNamespaceComments: true
+InsertBraces: false
+InsertNewlineAtEOF: true
+IncludeBlocks: Preserve
+MaxEmptyLinesToKeep: 2
+
+AlignAfterOpenBracket: false
+DerivePointerAlignment: false
+PointerAlignment: Left
+QualifierAlignment: Left
+ReferenceAlignment: Left
+
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseExpressionOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortCompoundRequirementOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLambdasOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortNamespacesOnASingleLine: false
+
+BinPackArguments: false
+BinPackParameters: false
+PackConstructorInitializers: Never
+
+BreakBeforeBraces: Allman
+BreakBeforeTemplateCloser: true
+BreakBeforeTernaryOperators: false
+BreakBinaryOperations: OnePerLine
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: AfterColon
+BreakStringLiterals: true
+BreakTemplateDeclarations: Yes
+CompactNamespaces: false
+
+MacroBlockBegin: "BEGIN_TEST"
+MacroBlockEnd: "END_TEST"
