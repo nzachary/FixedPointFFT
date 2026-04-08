@@ -4,35 +4,19 @@
 // Sine and cosine functions
 
 #include "clamp.hpp"
+#include "fpfft/config.hpp"
+#include "fpfft/containers/lut.hpp"
 #include "fpfft/numbers/fixed_point.hpp" // IWYU pragma: keep
+#include <algorithm>
 #include <cmath>
 
 namespace FPFFT
 {
 
-// Computes the value of sin(2*pi*x).
+// Computes the value of sin(2*pi*x). Domain from 0 to 0.25
 template <typename S, int F, typename I>
-constexpr FixedPoint<S, F, I> Sin2PI(const FixedPoint<S, F, I> x)
+constexpr S Sin2PI2(const I X)
 {
-  using FP = FixedPoint<S, F, I>;
-  // This function f(x) only approximates over 0 < x < pi/2
-  // 3pi/2 < x <= 2pi   : sin(x) = -f(-x+2pi)
-  // pi    < x <= 3pi/2 : sin(x) = -f(x-pi)
-  // pi/2  < x <= pi    : sin(x) =  f(pi-x)
-  // 0     < x <= pi/2  : sin(x) =  f(x)
-  // Also sin(-x) = -sin(x)
-  const S storage = x.Storage();
-  bool negative = storage < 0;
-  I X = std::abs(I(storage));
-  X %= FP::Scale;
-  negative = negative != X > FP::Scale / 2;
-  if (3 * FP::Scale / 4 < X)
-    X = FP::Scale - X;
-  else if (FP::Scale / 2 < X)
-    X = X - FP::Scale / 2;
-  else if (FP::Scale / 4 < X)
-    X = FP::Scale / 2 - X;
-
   // See cosine function for more detail on derivation
   // sin(x) = Σ ( (-1)^n x^2n+1) / (2n+1)!
   // Where a = 2pi, b = (2pi)^3/6, c = (2pi)^5/120, d = (2pi)^7/5040
@@ -91,34 +75,13 @@ constexpr FixedPoint<S, F, I> Sin2PI(const FixedPoint<S, F, I> x)
   // 2^-g x (y)
   y = (y * X) >> g;
 
-  if (negative)
-    y = -y;
-  FP out;
-  out.Storage() = Clamp<S>(y);
-  return out;
+  return Clamp<S>(y);
 }
 
-// Computes the value of cos(2*pi*x).
+// Computes the value of cos(2*pi*x). Domain from 0 to 0.25
 template <typename S, int F, typename I>
-constexpr FixedPoint<S, F, I> Cos2PI(const FixedPoint<S, F, I> x)
+constexpr S Cos2PI2(const I X)
 {
-  using FP = FixedPoint<S, F, I>;
-  // This function f(x) only approximates over 0 < x < pi/2
-  // 3pi/2 < x <= 2pi   : cos(x) =  f(2pi-x)
-  // pi    < x <= 3pi/2 : cos(x) = -f(x-pi)
-  // pi/2  < x <= pi    : sin(x) = -f(pi-x)
-  // 0     < x <= pi/2  : cos(x) =  f(x)
-  // Also cos(-x) = cos(x)
-  I X = std::abs(I(x.Storage()));
-  X %= FP::Scale;
-  bool negative = FP::Scale / 4 < X && X < 3 * FP::Scale / 4;
-  if (3 * FP::Scale / 4 < X)
-    X = FP::Scale - X;
-  else if (FP::Scale / 2 < X)
-    X = X - FP::Scale / 2;
-  else if (FP::Scale / 4 < X)
-    X = FP::Scale / 2 - X;
-
   // cos(x) = Σ ( (-1)^n x^2n) / (2n)!
   // t = (2pi * x)
   // cos(t)/s = Σ ( (-1)^n t^2n s^-2n) / (2n)!             (Factor in scaling)
@@ -169,10 +132,120 @@ constexpr FixedPoint<S, F, I> Cos2PI(const FixedPoint<S, F, I> x)
   y = (y * X) >> e;
   y = (I(1) << n) - y;
 
+  return Clamp<S>(y);
+}
+
+// Wrapper for the LUTs since we can't put a static variable in a constexpr function
+namespace detail
+{
+#ifdef FPFFT_SINCOS_USE_LUT
+template <typename S, int F, typename I>
+struct SineLUTWrapper
+{
+  // Discard everything except for the 16 bits used to represent 0 -> 0.25
+  static constexpr size_t ShiftBits = std::max(0, (F - 2 - 16));
+  class SineLUT : public LUT<S, 65536>
+  {
+   public:
+
+    constexpr SineLUT()
+    {
+      for (I i = 0; i < 65536; i++)
+        this->data(i) = Sin2PI2<S, F, I>(i << ShiftBits);
+    }
+  };
+  static constexpr SineLUT lut = SineLUT();
+};
+
+template <typename S, int F, typename I>
+struct CosineLUTWrapper
+{
+  // Discard everything except for the 16 bits used to represent 0 -> 0.25
+  static constexpr size_t ShiftBits = std::max(0, (F - 2 - 16));
+  class CosineLUT : public LUT<S, 65536>
+  {
+   public:
+
+    constexpr CosineLUT()
+    {
+      for (I i = 0; i < 65536; i++)
+        this->data(i) = Cos2PI2<S, F, I>(i << ShiftBits);
+    }
+  };
+  static constexpr CosineLUT lut = CosineLUT();
+};
+#endif
+} // namespace detail
+
+// Gets the value of sin(2*pi*x).
+template <typename S, int F, typename I>
+constexpr FixedPoint<S, F, I> Sin2PI(const FixedPoint<S, F, I> x)
+{
+  using FP = FixedPoint<S, F, I>;
+
+  // This function f(x) only approximates over 0 < x < pi/2
+  // 3pi/2 < x <= 2pi   : sin(x) = -f(-x+2pi)
+  // pi    < x <= 3pi/2 : sin(x) = -f(x-pi)
+  // pi/2  < x <= pi    : sin(x) =  f(pi-x)
+  // 0     < x <= pi/2  : sin(x) =  f(x)
+  // Also sin(-x) = -sin(x)
+  const S storage = x.Storage();
+  bool negative = storage < 0;
+  I X = std::abs(I(storage));
+  X %= FP::Scale;
+  negative = negative != X > FP::Scale / 2;
+  if (3 * FP::Scale / 4 < X)
+    X = FP::Scale - X;
+  else if (FP::Scale / 2 < X)
+    X = X - FP::Scale / 2;
+  else if (FP::Scale / 4 < X)
+    X = FP::Scale / 2 - X;
+
+#ifdef FPFFT_SINCOS_USE_LUT
+  S y = detail::SineLUTWrapper<S, F, I>::lut(X >> detail::SineLUTWrapper<S, F, I>::ShiftBits);
+#else
+  S y = Sin2PI2<S, F, I>(X);
+#endif
+
   if (negative)
     y = -y;
   FP out;
-  out.Storage() = Clamp<S>(y);
+  out.Storage() = y;
+  return out;
+}
+
+// Gets the value of cos(2*pi*x).
+template <typename S, int F, typename I>
+constexpr FixedPoint<S, F, I> Cos2PI(const FixedPoint<S, F, I> x)
+{
+  using FP = FixedPoint<S, F, I>;
+
+  // This function f(x) only approximates over 0 < x < pi/2
+  // 3pi/2 < x <= 2pi   : cos(x) =  f(2pi-x)
+  // pi    < x <= 3pi/2 : cos(x) = -f(x-pi)
+  // pi/2  < x <= pi    : sin(x) = -f(pi-x)
+  // 0     < x <= pi/2  : cos(x) =  f(x)
+  // Also cos(-x) = cos(x)
+  I X = std::abs(I(x.Storage()));
+  X %= FP::Scale;
+  bool negative = FP::Scale / 4 < X && X < 3 * FP::Scale / 4;
+  if (3 * FP::Scale / 4 < X)
+    X = FP::Scale - X;
+  else if (FP::Scale / 2 < X)
+    X = X - FP::Scale / 2;
+  else if (FP::Scale / 4 < X)
+    X = FP::Scale / 2 - X;
+
+#ifdef FPFFT_SINCOS_USE_LUT
+  S y = detail::CosineLUTWrapper<S, F, I>::lut(X >> detail::CosineLUTWrapper<S, F, I>::ShiftBits);
+#else
+  S y = Cos2PI2<S, F, I>(X);
+#endif
+
+  if (negative)
+    y = -y;
+  FP out;
+  out.Storage() = y;
   return out;
 }
 

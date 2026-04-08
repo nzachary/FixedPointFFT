@@ -1,6 +1,7 @@
 #ifndef FPFFT_HPP
 #define FPFFT_HPP
 
+#include "fpfft/config.hpp"  // IWYU pragma: export
 #include "fpfft/version.hpp" // IWYU pragma: export
 
 #include "fpfft/numbers/complex.hpp"     // IWYU pragma: export
