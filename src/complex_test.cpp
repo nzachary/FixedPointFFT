@@ -79,7 +79,7 @@ BEGIN_TEST(Sub32Test)
   TEST_SUB;
 END_TEST
 
-// TODO: other tests
+// TODO: Test multiplication and divison operations
 
 
 int main()

@@ -89,7 +89,9 @@ BEGIN_TEST(SingleSineSize128FFTTest)
     // The bins to expect these spikes are at size * 0.25 and size * (1-0.25).
     for (size_t j = 0; j < output.Size(); j++)
     {
-      double expect = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ? amplitude * output.Size() / 2 : 0;
+      double expect = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ?
+                          amplitude * output.Size() / 2 :
+                          0;
       REQUIRE_APPROX(double(output(j).Magnitude()), expect, output.Size() * 1e-2);
     }
   }
@@ -107,7 +109,74 @@ BEGIN_TEST(SingleSineSize80FFTTest)
     // The bins to expect these spikes are at size * 0.25 and size * (1-0.25).
     for (size_t j = 0; j < output.Size(); j++)
     {
-      double expect = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ? amplitude * output.Size() / 2 : 0;
+      double expect = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ?
+                          amplitude * output.Size() / 2 :
+                          0;
+      REQUIRE_APPROX(double(output(j).Magnitude()), expect, output.Size() * 1e-2);
+    }
+  }
+END_TEST
+
+// Test the FFT on a multi sine singal with a size that is a power of 2
+BEGIN_TEST(MultiSineSize128FFTTest)
+  for (size_t i = 0; i < 1000; i++)
+  {
+    double a1 = double(rand()) / RAND_MAX;
+    double p1 = 2 * M_PI * double(rand()) / RAND_MAX;
+    double a2 = double(rand()) / RAND_MAX;
+    double p2 = 2 * M_PI * double(rand()) / RAND_MAX;
+    double a3 = double(rand()) / RAND_MAX;
+    double p3 = 2 * M_PI * double(rand()) / RAND_MAX;
+    auto output = ExecuteFFTSines<128>({
+        Sine{.amplitude = a1, .frequency = 0, .phase = p1},    // DC signal
+        Sine{.amplitude = a2, .frequency = 0.25, .phase = p2}, // Sine at 0.25 frequency
+        Sine{.amplitude = a3, .frequency = 0.125, .phase = p3} // Sine at 0.125 frequency
+    });
+    // The output should have `Size * amplitude / 2` in the bin corresponding to their frequency and
+    // 0 elsewhere. The / 2 is because the result is mirrored across the halfway point. The bins to
+    // expect these spikes are at size * (frequency) and size * (1-frequency).
+    for (size_t j = 0; j < output.Size(); j++)
+    {
+      double s1 = (j == 0) ? std::abs(a1 * sin(p1) * output.Size()) : 0; // DC signal
+      double s2 = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ?
+                      a2 * output.Size() / 2 :
+                      0; // Sine at 0.25 frequency
+      double s3 = (j == output.Size() * 0.125 || j == output.Size() * 0.875) ?
+                      a3 * output.Size() / 2 :
+                      0; // Sine at 0.125 frequency
+      double expect = s1 + s2 + s3;
+      REQUIRE_APPROX(double(output(j).Magnitude()), expect, output.Size() * 1e-2);
+    }
+  }
+END_TEST
+
+// Test the FFT on a multi sine singal with a size that is not a power of 2
+BEGIN_TEST(MultiSineSize80FFTTest)
+  {
+    double a1 = double(rand()) / RAND_MAX;
+    double p1 = 2 * M_PI * double(rand()) / RAND_MAX;
+    double a2 = double(rand()) / RAND_MAX;
+    double p2 = 2 * M_PI * double(rand()) / RAND_MAX;
+    double a3 = double(rand()) / RAND_MAX;
+    double p3 = 2 * M_PI * double(rand()) / RAND_MAX;
+    auto output = ExecuteFFTSines<80>({
+        Sine{.amplitude = a1, .frequency = 0, .phase = p1},    // DC signal
+        Sine{.amplitude = a2, .frequency = 0.25, .phase = p2}, // Sine at 0.25 frequency
+        Sine{.amplitude = a3, .frequency = 0.125, .phase = p3} // Sine at 0.125 frequency
+    });
+    // The output should have `Size * amplitude / 2` in the bin corresponding to their frequency and
+    // 0 elsewhere. The / 2 is because the result is mirrored across the halfway point. The bins to
+    // expect these spikes are at size * (frequency) and size * (1-frequency).
+    for (size_t j = 0; j < output.Size(); j++)
+    {
+      double s1 = (j == 0) ? std::abs(a1 * sin(p1) * output.Size()) : 0; // DC signal
+      double s2 = (j == output.Size() * 0.25 || j == output.Size() * 0.75) ?
+                      a2 * output.Size() / 2 :
+                      0; // Sine at 0.25 frequency
+      double s3 = (j == output.Size() * 0.125 || j == output.Size() * 0.875) ?
+                      a3 * output.Size() / 2 :
+                      0; // Sine at 0.125 frequency
+      double expect = s1 + s2 + s3;
       REQUIRE_APPROX(double(output(j).Magnitude()), expect, output.Size() * 1e-2);
     }
   }
@@ -120,4 +189,6 @@ int main()
   CALL_TEST(DCSize80FFTTest);
   CALL_TEST(SingleSineSize128FFTTest);
   CALL_TEST(SingleSineSize80FFTTest);
+  CALL_TEST(MultiSineSize128FFTTest);
+  CALL_TEST(MultiSineSize80FFTTest);
 }
