@@ -3,8 +3,8 @@
 
 // Sine and cosine functions
 
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
 #include "clamp.hpp"
+#include "fpfft/numbers/fixed_point.hpp" // IWYU pragma: keep
 #include <cmath>
 
 namespace FPFFT

@@ -1,10 +1,4 @@
-#include "../include/fixedpointfft.hpp"
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#define QUOTES(v) #v
-#define STRINGIFY(v) QUOTES(v)
+#include "fixedpointfft.hpp" // IWYU pragma: export
 
 #define BEGIN_TEST(name)                                                                           \
   void name()                                                                                      \
@@ -31,7 +25,7 @@ void handle_fail()
 #define REQUIRE(cond)                                                                              \
   if (!(cond))                                                                                     \
   {                                                                                                \
-    TEST_FAIL("(%s) == false", STRINGIFY(cond));                                                   \
+    TEST_FAIL("(%s) == false", _FPFFT_STRINGIFY(cond));                                            \
   }
 
 #define REQUIRE_APPROX_EPS(a, b, eps)                                                              \
@@ -43,7 +37,11 @@ void handle_fail()
     }                                                                                              \
   }
 
-#define REQUIRE_APPROX(a, b) REQUIRE_APPROX_EPS(a, b, 1e-3)
+#define REQUIRE_APPROX_1EN3(a, b) REQUIRE_APPROX_EPS(a, b, 1e-3)
+
+#define REQUIRE_APPROX(...)                                                                        \
+  _FPFFT_EXPAND(                                                                                   \
+      _FPFFT_GET_MACRO_ARGS_3(__VA_ARGS__, REQUIRE_APPROX_EPS, REQUIRE_APPROX_1EN3)(__VA_ARGS__))
 
 #define REQUIRE_EQUALS(a, b)                                                                       \
   {                                                                                                \

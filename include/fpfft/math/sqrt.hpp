@@ -1,9 +1,9 @@
 #ifndef FPFFT_MATH_SQRT_HPP
 #define FPFFT_MATH_SQRT_HPP
 
-#include "../bits/bits.hpp"
-#include "../containers/lut.hpp"
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
+#include "fpfft/bits/bits.hpp"
+#include "fpfft/containers/lut.hpp"
+#include "fpfft/numbers/fixed_point.hpp" // IWYU pragma: keep
 #include <climits>
 #include <stdexcept>
 

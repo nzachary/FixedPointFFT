@@ -2,7 +2,7 @@
 #define FPFFT_NUMBERS_COMPLEX_IMPL_HPP
 
 #include "complex.hpp"
-#include <cmath>
+#include "fpfft/math/sqrt.hpp"
 
 namespace FPFFT
 {
@@ -60,9 +60,9 @@ Complex<FP>& Complex<FP>::Conjugate()
 }
 
 template <typename FP>
-double Complex<FP>::Magnitude() const
+FP Complex<FP>::Magnitude() const
 {
-  return sqrt(real * real + imaginary * imaginary);
+  return Sqrt(real * real + imaginary * imaginary);
 }
 
 template <typename FP>

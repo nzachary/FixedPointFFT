@@ -18,6 +18,18 @@ struct IsFixed<FixedPoint<S, F, I>>
   static constexpr bool value = true;
 };
 
+template <typename T>
+struct IsComplex
+{
+  static constexpr bool value = false;
+};
+
+template <typename S, int F, typename I>
+struct IsComplex<Complex<FixedPoint<S, F, I>>>
+{
+  static constexpr bool value = true;
+};
+
 } // namespace FPFFT
 
 #endif

@@ -6,3 +6,4 @@
 ./arithmetic_test
 ./complex_test
 ./math_functions_test
+./fft_test

@@ -2,8 +2,6 @@
 
 // Test operations on complex numbers
 
-#include "../include/fixedpointfft.hpp"
-#include <cstdint>
 using namespace FPFFT;
 
 #define TEST_ADD                                                                                   \

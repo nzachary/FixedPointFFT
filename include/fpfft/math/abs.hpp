@@ -3,7 +3,7 @@
 
 // Absolute value function
 
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
+#include "fpfft/numbers/fixed_point.hpp" // IWYU pragma: keep
 #include <limits>
 
 namespace FPFFT

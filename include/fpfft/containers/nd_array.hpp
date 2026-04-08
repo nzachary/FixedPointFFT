@@ -1,8 +1,9 @@
 #ifndef FPFFT_CONTAINERS_ND_ARRAY_HPP
 #define FPFFT_CONTAINERS_ND_ARRAY_HPP
 
-// Fixed size container with N dimensions
+// Fixed size container with up to 3 dimensions
 
+#include "fpfft/debug/assert.hpp"
 #include <array>
 #include <cstddef>
 
@@ -17,6 +18,11 @@ class NDArray
   constexpr NDArray() :
       data()
   {
+  }
+
+  constexpr size_t Size() const
+  {
+    return TotalSize;
   }
 
   constexpr T& operator()(size_t i)
@@ -46,10 +52,20 @@ class NDArray
     return data[z * Y * X + y * X + x];
   }
 
+  constexpr T* Data()
+  {
+    return data.data();
+  }
+
+  constexpr const T* Data() const
+  {
+    return data.data();
+  }
+
  private:
 
-  static constexpr size_t Size = X * std::max(Y, size_t(1)) * std::max(Z, size_t(1));
-  std::array<T, Size> data;
+  static constexpr size_t TotalSize = X * std::max(Y, size_t(1)) * std::max(Z, size_t(1));
+  std::array<T, TotalSize> data;
 };
 
 } // namespace FPFFT

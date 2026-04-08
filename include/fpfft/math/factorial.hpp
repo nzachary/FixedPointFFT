@@ -1,8 +1,6 @@
 #ifndef FPFFT_MATH_FACTORIAL_HPP
 #define FPFFT_MATH_FACTORIAL_HPP
 
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
-
 namespace FPFFT
 {
 

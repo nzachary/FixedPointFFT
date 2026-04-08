@@ -9,7 +9,7 @@ namespace FPFFT
 {
 
 template <typename T>
-int _Clz(T val)
+constexpr int _Clz(T val)
 {
   using UnsignedT = std::make_unsigned_t<T>;
 #if defined(__GNUC__)
@@ -22,7 +22,7 @@ int _Clz(T val)
 }
 
 template <typename T>
-int _Ctz(T val)
+constexpr int _Ctz(T val)
 {
   using UnsignedT = std::make_unsigned_t<T>;
 #if defined(__GNUC__)

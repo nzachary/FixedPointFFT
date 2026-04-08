@@ -13,6 +13,8 @@ class Complex
 {
  public:
 
+  using FixedType = FP;
+
   Complex();
   template <typename T>
   Complex(T r, T i);
@@ -26,9 +28,7 @@ class Complex
   Complex Conjugated() const;
   Complex& Conjugate();
 
-  // TODO: implement fixed point sqrt
-  // FP Magnitude() const;
-  double Magnitude() const;
+  FP Magnitude() const;
 
 
   // Basic arithmetic operations

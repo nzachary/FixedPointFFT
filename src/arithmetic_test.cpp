@@ -2,8 +2,6 @@
 
 // Test basic arithmetic operations on fixed point numbers
 
-#include "../include/fixedpointfft.hpp"
-#include <cstdint>
 using namespace FPFFT;
 
 // Macro to help with creating functions

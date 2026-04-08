@@ -2,7 +2,7 @@
 #define FPFFT_NUMBERS_FIXED_POINT_IMPL_HPP
 
 #include "fixed_point.hpp"
-#include <cmath>
+#include <cmath> // IWYU pragma: keep
 
 namespace FPFFT
 {

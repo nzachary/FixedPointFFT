@@ -1,8 +1,9 @@
 #ifndef FPFFT_MATH_POW_HPP
 #define FPFFT_MATH_POW_HPP
 
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
 #include "factorial.hpp"
+#include "fpfft/math/sincos.hpp"
+#include "fpfft/numbers/fixed_point.hpp" // IWYU pragma: keep
 
 namespace FPFFT
 {
@@ -41,7 +42,7 @@ constexpr FixedPoint<S, F, I> Pow(const FixedPoint<S, F, I> base, const FixedPoi
   using FP = FixedPoint<S, F, I>;
 }
 
-// Natural exponent
+// Natural exponent: e^x
 template <typename S, int F, typename I, size_t N = 8>
 constexpr FixedPoint<S, F, I> Exp(const FixedPoint<S, F, I> power)
 {
@@ -52,6 +53,17 @@ constexpr FixedPoint<S, F, I> Exp(const FixedPoint<S, F, I> power)
     out += PowI(power, n) / Factorial(n);
   return out;
 }
+
+// Natural exponent of a complex number: e^i(2pi x)
+template <typename S, int F, typename I>
+constexpr Complex<FixedPoint<S, F, I>> Exp2PIC(const FixedPoint<S, F, I> power)
+{
+  using FP = FixedPoint<S, F, I>;
+  FP real = Cos2PI(power);
+  FP imaginary = Sin2PI(power);
+  return Complex<FP>(real, imaginary);
+}
+
 
 } // namespace FPFFT
 

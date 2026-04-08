@@ -3,7 +3,6 @@
 
 // Clamp numbers to a limit
 
-#include "../numbers/numbers.hpp" // IWYU pragma: keep
 #include <limits>
 
 namespace FPFFT
