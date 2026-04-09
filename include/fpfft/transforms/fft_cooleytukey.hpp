@@ -1,18 +1,17 @@
 #ifndef FPFFT_TRANSFORMS_FFT_COOLEYTUKEY_HPP
 #define FPFFT_TRANSFORMS_FFT_COOLEYTUKEY_HPP
 
-#include "fpfft/debug/assert.hpp"
 #include "fpfft/math/pow.hpp"
 #include "fpfft/numbers/sfinae.hpp"
+#include "fpfft/transforms/direction.hpp"
 #include <cstddef>
 #include <type_traits>
-#include <vector>
 
 namespace FPFFT
 {
 
 // Recursive implementation of the Cooley-Tukey algorithm
-template <typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
+template <int Direction, typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
 void FFTCooleyTukeyDepthFirstC2C(
     const Complex* in, Complex* out, const size_t N, const size_t stride)
 {
@@ -25,8 +24,8 @@ void FFTCooleyTukeyDepthFirstC2C(
   else
   {
     const size_t halfN = N / 2;
-    FFTCooleyTukeyDepthFirstC2C(in, out, halfN, 2 * stride);
-    FFTCooleyTukeyDepthFirstC2C(in + stride, out + halfN, halfN, 2 * stride);
+    FFTCooleyTukeyDepthFirstC2C<Direction>(in, out, halfN, 2 * stride);
+    FFTCooleyTukeyDepthFirstC2C<Direction>(in + stride, out + halfN, halfN, 2 * stride);
 
     FP x;
     Complex q;
@@ -43,6 +42,11 @@ void FFTCooleyTukeyDepthFirstC2C(
       out[k] += q;
     }
   }
+
+  if constexpr (Direction == FPFFT_IFFT)
+    if (stride == 1)
+      for (size_t k = 0; k < N; k++)
+        out[k] /= N;
 }
 
 } // namespace FPFFT

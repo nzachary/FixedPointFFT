@@ -16,6 +16,9 @@ class PlanCreator
   // Use these functions to create plans
   template <size_t N, typename FixedType, std::enable_if_t<IsFixed<FixedType>::value, bool> = false>
   static Plan<Complex<FixedType>, Complex<FixedType>, N, N> PlanDFTC2C();
+
+  template <size_t N, typename FixedType, std::enable_if_t<IsFixed<FixedType>::value, bool> = false>
+  static Plan<Complex<FixedType>, Complex<FixedType>, N, N> PlanIDFTC2C();
 };
 
 } // namespace FPFFT

@@ -40,9 +40,17 @@ class Complex
 
   Complex operator*(Complex other) const;
   Complex& operator*=(Complex other);
+  template <typename T>
+  Complex operator*(T other) const;
+  template <typename T>
+  Complex& operator*=(T other);
 
   Complex operator/(Complex other) const;
   Complex& operator/=(Complex other);
+  template <typename T>
+  Complex operator/(T other) const;
+  template <typename T>
+  Complex& operator/=(T other);
 
  private:
 

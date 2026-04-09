@@ -109,6 +109,22 @@ Complex<FP>& Complex<FP>::operator*=(Complex other)
 }
 
 template <typename FP>
+template <typename T>
+Complex<FP> Complex<FP>::operator*(T other) const
+{
+  return Complex(real * other, imaginary * other);
+}
+
+template <typename FP>
+template <typename T>
+Complex<FP>& Complex<FP>::operator*=(T other)
+{
+  real *= other;
+  imaginary *= other;
+  return *this;
+}
+
+template <typename FP>
 Complex<FP> Complex<FP>::operator/(Complex other) const
 {
   // The common denominator is the magnitude of `other` squared
@@ -127,6 +143,21 @@ Complex<FP>& Complex<FP>::operator/=(Complex other)
   return *this;
 }
 
+template <typename FP>
+template <typename T>
+Complex<FP> Complex<FP>::operator/(T other) const
+{
+  return Complex(real / other, imaginary / other);
+}
+
+template <typename FP>
+template <typename T>
+Complex<FP>& Complex<FP>::operator/=(T other)
+{
+  real /= other;
+  imaginary /= other;
+  return *this;
+}
 
 } // namespace FPFFT
 

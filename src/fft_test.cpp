@@ -1,6 +1,6 @@
 #include "test_common.hpp"
 
-// Test operations on complex numbers
+// Test FFT functions
 
 #include <cmath>
 #include <cstdlib>
@@ -53,7 +53,7 @@ BEGIN_TEST(DCSize128FFTTest)
   {
     double signal = double(rand()) / RAND_MAX;
     auto output = ExecuteFFTDC<128>(signal);
-    // The output should have the `Size * signal` in the first bin (0 Hz) and 0 elsewhere
+    // The output should have `Size * signal` in the first bin (0 Hz) and 0 elsewhere
     for (size_t j = 0; j < output.Size(); j++)
     {
       double expect = (j == 0) ? signal * output.Size() : 0;
@@ -68,7 +68,7 @@ BEGIN_TEST(DCSize80FFTTest)
   {
     double signal = double(rand()) / RAND_MAX;
     auto output = ExecuteFFTDC<80>(signal);
-    // The output should have the `Size * signal` in the first bin (0 Hz) and 0 elsewhere
+    // The output should have `Size * signal` in the first bin (0 Hz) and 0 elsewhere
     for (size_t j = 0; j < output.Size(); j++)
     {
       double expect = (j == 0) ? signal * output.Size() : 0;

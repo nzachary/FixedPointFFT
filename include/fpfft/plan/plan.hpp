@@ -36,7 +36,8 @@ class Plan
       COPY,                           // Just a plain copy from the input to output
       DFTNaive,                       // Naive discrete fourier transform
       FFTCooleyTukeyDepthFirstRadix2, // Cooley-Tukey algorithm (depth first), radix 2
-      FFTCooleyTukeyRadix2,           // Cooley-Tukey algorithm, radix 2
+      IDFTNaive,                       // Naive discrete fourier transform
+      IFFTCooleyTukeyDepthFirstRadix2, // Cooley-Tukey algorithm (depth first), radix 2
     } func;
 
     size_t inSize;

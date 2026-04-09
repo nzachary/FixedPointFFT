@@ -1,6 +1,7 @@
 #ifndef FPFFT_TRANSFORMS_DFT_NAIVE_HPP
 #define FPFFT_TRANSFORMS_DFT_NAIVE_HPP
 
+#include "direction.hpp"
 #include "fpfft/math/pow.hpp"
 #include "fpfft/numbers/sfinae.hpp"
 #include <cstddef>
@@ -9,7 +10,7 @@
 namespace FPFFT
 {
 
-template <typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
+template <int Direction, typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
 void DFTNaiveC2C(const Complex* in, Complex* out, const size_t N)
 {
   using FP = typename Complex::FixedType;
@@ -20,10 +21,11 @@ void DFTNaiveC2C(const Complex* in, Complex* out, const size_t N)
     out[i] = Complex(0, 0);
     for (size_t j = 0; j < N; ++j)
     {
-      x.Storage() = (j * i * FP::Scale) / N;
-      Complex term = in[j] * Exp2PIC(x);
-      out[i] += term;
+      x.Storage() = -Direction * (j * i * FP::Scale) / N;
+      out[i] += in[j] * Exp2PIC(x);
     }
+    if constexpr (Direction == FPFFT_IFFT)
+      out[i] /= N;
   }
 }
 

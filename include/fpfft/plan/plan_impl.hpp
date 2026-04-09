@@ -4,6 +4,7 @@
 #include "fpfft/debug/assert.hpp"
 #include "fpfft/numbers/sfinae.hpp"
 #include "fpfft/transforms/dft_naive.hpp"
+#include "fpfft/transforms/direction.hpp"
 #include "fpfft/transforms/fft_cooleytukey.hpp"
 #include "plan.hpp"
 #include <stdexcept>
@@ -64,7 +65,7 @@ void Plan<InType, OutType, InSize, OutSize>::Execute()
           FPFFT_ASSERT(
               InComplex && OutComplex, "Other types of transforms have not been implemented yet");
           if constexpr (InComplex && OutComplex)
-            DFTNaiveC2C(inPtr, outPtr, s.inSize);
+            DFTNaiveC2C<FPFFT_FFT>(inPtr, outPtr, s.inSize);
         }
         break;
       case Step::Function::FFTCooleyTukeyDepthFirstRadix2:
@@ -72,7 +73,23 @@ void Plan<InType, OutType, InSize, OutSize>::Execute()
           FPFFT_ASSERT(
               InComplex && OutComplex, "Other types of transforms have not been implemented yet");
           if constexpr (InComplex && OutComplex)
-            FFTCooleyTukeyDepthFirstC2C(inPtr, outPtr, s.inSize, 1);
+            FFTCooleyTukeyDepthFirstC2C<FPFFT_FFT>(inPtr, outPtr, s.inSize, 1);
+        }
+        break;
+      case Step::Function::IDFTNaive:
+        {
+          FPFFT_ASSERT(
+              InComplex && OutComplex, "Other types of transforms have not been implemented yet");
+          if constexpr (InComplex && OutComplex)
+            DFTNaiveC2C<FPFFT_IFFT>(inPtr, outPtr, s.inSize);
+        }
+        break;
+      case Step::Function::IFFTCooleyTukeyDepthFirstRadix2:
+        {
+          FPFFT_ASSERT(
+              InComplex && OutComplex, "Other types of transforms have not been implemented yet");
+          if constexpr (InComplex && OutComplex)
+            FFTCooleyTukeyDepthFirstC2C<FPFFT_IFFT>(inPtr, outPtr, s.inSize, 1);
         }
         break;
       default:
