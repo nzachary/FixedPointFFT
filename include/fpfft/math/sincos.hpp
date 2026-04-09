@@ -143,7 +143,7 @@ template <typename S, int F, typename I>
 struct SineLUTWrapper
 {
   // Discard everything except for the 16 bits used to represent 0 -> 0.25
-  static constexpr size_t ShiftBits = std::max(0, (F - 2 - 16));
+  static constexpr size_t ShiftBits = std::max(0, (F - 17));
   class SineLUT : public LUT<S, 65536>
   {
    public:
@@ -161,7 +161,7 @@ template <typename S, int F, typename I>
 struct CosineLUTWrapper
 {
   // Discard everything except for the 16 bits used to represent 0 -> 0.25
-  static constexpr size_t ShiftBits = std::max(0, (F - 2 - 16));
+  static constexpr size_t ShiftBits = std::max(0, (F - 17));
   class CosineLUT : public LUT<S, 65536>
   {
    public:

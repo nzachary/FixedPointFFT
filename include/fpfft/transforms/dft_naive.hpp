@@ -10,7 +10,9 @@
 namespace FPFFT
 {
 
-template <int Direction, typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
+template <int Direction,
+    typename Complex,
+    std::enable_if_t<IsComplex<Complex>::value, bool> = false>
 void DFTNaiveC2C(const Complex* in, Complex* out, const size_t N)
 {
   using FP = typename Complex::FixedType;

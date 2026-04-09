@@ -11,7 +11,9 @@ namespace FPFFT
 {
 
 // Recursive implementation of the Cooley-Tukey algorithm
-template <int Direction, typename Complex, std::enable_if_t<IsComplex<Complex>::value, bool> = false>
+template <int Direction,
+    typename Complex,
+    std::enable_if_t<IsComplex<Complex>::value, bool> = false>
 void FFTCooleyTukeyDepthFirstC2C(
     const Complex* in, Complex* out, const size_t N, const size_t stride)
 {

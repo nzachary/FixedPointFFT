@@ -33,9 +33,9 @@ class Plan
     // Function to call at each step
     enum Function
     {
-      COPY,                           // Just a plain copy from the input to output
-      DFTNaive,                       // Naive discrete fourier transform
-      FFTCooleyTukeyDepthFirstRadix2, // Cooley-Tukey algorithm (depth first), radix 2
+      COPY,                            // Just a plain copy from the input to output
+      DFTNaive,                        // Naive discrete fourier transform
+      FFTCooleyTukeyDepthFirstRadix2,  // Cooley-Tukey algorithm (depth first), radix 2
       IDFTNaive,                       // Naive discrete fourier transform
       IFFTCooleyTukeyDepthFirstRadix2, // Cooley-Tukey algorithm (depth first), radix 2
     } func;
